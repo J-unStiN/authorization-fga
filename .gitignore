@@ -1,0 +1,30 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE - Global
+.idea/
+.vscode/
+*.swp
+*.iml
+
+# Logs
+*.log
+
+# Node (Global catch-all)
+**/node_modules/
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+
+# Java/Gradle (Global catch-all)
+**/.gradle/
+**/build/
+**/out/
+**/bin/
+**/.settings/
+**/.classpath
+**/.project
+
+# Docker
+.docker/

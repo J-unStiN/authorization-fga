@@ -1,0 +1,69 @@
+services:
+  postgres-app:
+    image: postgres:16-alpine
+    container_name: postgres-app
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=auth_db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_app_data:/var/lib/postgresql/data
+    networks:
+      - fga-net
+
+  postgres-openfga:
+    image: postgres:16-alpine
+    container_name: postgres-openfga
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DB=openfga
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_openfga_data:/var/lib/postgresql/data
+    networks:
+      - fga-net
+
+  openfga-migrate:
+    image: openfga/openfga:latest
+    container_name: openfga-migrate
+    command: migrate
+    environment:
+      - OPENFGA_DATASTORE_ENGINE=postgres
+      - OPENFGA_DATASTORE_URI=postgres://postgres:password@postgres-openfga:5432/openfga?sslmode=disable
+    depends_on:
+      postgres-openfga:
+        condition: service_started
+    networks:
+      - fga-net
+
+  openfga:
+    image: openfga/openfga:latest
+    container_name: openfga
+    command: run
+    environment:
+      - OPENFGA_DATASTORE_ENGINE=postgres
+      - OPENFGA_DATASTORE_URI=postgres://postgres:password@postgres-openfga:5432/openfga?sslmode=disable
+      - OPENFGA_PLAYGROUND_ENABLED=true
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+      - "3000:3000"
+    depends_on:
+      postgres-openfga:
+        condition: service_started
+      openfga-migrate:
+        condition: service_completed_successfully
+    networks:
+      - fga-net
+
+networks:
+  fga-net:
+    driver: bridge
+
+volumes:
+  postgres_app_data:
+  postgres_openfga_data:
