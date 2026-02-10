@@ -1,4 +1,4 @@
-# OpenFGA Authorization Playground
+# OpenFGA Authorization Playground (현재 개발중)
 
 이 프로젝트는 [OpenFGA](https://openfga.dev/)를 사용한 세밀한 권한 제어(Fine-Grained Authorization)를 실험하기 위한 플레이그라운드입니다.
 
